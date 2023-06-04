@@ -243,7 +243,7 @@ async function run() {
                 customers,
                 products,
                 orders,
-                revinew,
+                revinew: revinew[0].total,
                 // revinew2
             });
 
