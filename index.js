@@ -214,6 +214,42 @@ async function run() {
             res.send({insertResult, deleteResult});
         });
 
+
+        /**
+         * ----------------------------- Admin Stats --------------------------------
+         */
+        app.get('/admin-stats', jwtVerify, verifyAdmin, async (req, res) => {
+
+            const customers = await userCollection.estimatedDocumentCount();
+            const products = await menuCollection.estimatedDocumentCount();
+            const orders = await paymentCollection.estimatedDocumentCount();
+            // Method 1
+            const revinew = await paymentCollection.aggregate([
+                {
+                  $group: {
+                    _id: null,
+                    total: {
+                      $sum: "$price"
+                    }
+                  }
+                }
+              ]).toArray();
+
+            // Method 2
+            const payment = await paymentCollection.find().toArray();
+            const revinew2 = payment.reduce((sum, payment) => sum + payment.price, 0);  
+
+            res.send({
+                customers,
+                products,
+                orders,
+                revinew,
+                // revinew2
+            });
+
+        });
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({  ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
