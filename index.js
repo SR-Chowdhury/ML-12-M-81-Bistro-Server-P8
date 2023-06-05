@@ -249,7 +249,7 @@ async function run() {
 
         });
 
-        app.get('/order-stats', async (req, res) => {
+        app.get('/order-stats', jwtVerify, verifyAdmin, async (req, res) => {
             const pipeline = [
                 {
                   $lookup: {
